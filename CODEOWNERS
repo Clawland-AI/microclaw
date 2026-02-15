@@ -1,0 +1,6 @@
+# Clawland CODEOWNERS
+# Each line maps a file pattern to one or more code owners.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: all files owned by Clawland core team
+* @Tonyfudecai
