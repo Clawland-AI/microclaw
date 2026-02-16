@@ -52,6 +52,138 @@ MicroClaw is the smallest member of the Claw family — a bare-metal AI agent th
    └─────────┘
 ```
 
+---
+
+## Getting Started
+
+### Prerequisites
+
+- **PlatformIO** — Install via [PlatformIO IDE](https://platformio.org/install/ide?install=vscode) or [CLI](https://docs.platformio.org/en/latest/core/installation/index.html)
+- **ESP32 Development Board** — ESP32-DevKitC, ESP32-C3, or compatible
+- **USB Cable** — For flashing and serial monitoring
+
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Clawland-AI/microclaw.git
+   cd microclaw
+   ```
+
+2. **Configure WiFi and MQTT**:
+   Edit `src/main.cpp` and replace the placeholder credentials:
+   ```cpp
+   const char* WIFI_SSID = "your_wifi_ssid";
+   const char* WIFI_PASSWORD = "your_wifi_password";
+   const char* MQTT_BROKER = "mqtt.example.com";
+   ```
+
+3. **Install dependencies** (automatic):
+   ```bash
+   pio lib install
+   ```
+
+### Flashing Instructions
+
+#### Option 1: PlatformIO IDE (VS Code)
+
+1. Open the `microclaw` folder in VS Code with PlatformIO extension
+2. Connect your ESP32 via USB
+3. Click **PlatformIO: Upload** (arrow icon in the bottom toolbar)
+4. Open **PlatformIO: Serial Monitor** (plug icon) to view logs
+
+#### Option 2: PlatformIO CLI
+
+1. Connect your ESP32 via USB
+2. Build and upload:
+   ```bash
+   pio run --target upload
+   ```
+3. Monitor serial output:
+   ```bash
+   pio device monitor
+   ```
+
+#### Option 3: Manual Flashing (esptool.py)
+
+If PlatformIO is unavailable, use `esptool.py`:
+
+```bash
+# Build firmware
+pio run
+
+# Find COM port (Linux: /dev/ttyUSB0, macOS: /dev/cu.usbserial-*, Windows: COM3)
+ls /dev/tty*
+
+# Flash firmware
+esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 921600 \
+  write_flash -z 0x1000 .pio/build/esp32/bootloader.bin \
+  0x8000 .pio/build/esp32/partitions.bin \
+  0x10000 .pio/build/esp32/firmware.bin
+
+# Monitor serial
+minicom -D /dev/ttyUSB0 -b 115200
+```
+
+### Troubleshooting
+
+#### ESP32 not detected
+
+```bash
+# Check USB connection
+lsusb  # Linux
+system_profiler SPUSBDataType  # macOS
+
+# Add user to dialout group (Linux)
+sudo usermod -a -G dialout $USER
+# Log out and back in
+```
+
+#### Upload fails
+
+```bash
+# Hold BOOT button on ESP32 while clicking Upload
+# Or use slower baud rate
+pio run --target upload --upload-port /dev/ttyUSB0 --upload-speed 115200
+```
+
+#### WiFi connection fails
+
+- Verify SSID/password are correct
+- Check 2.4GHz network (ESP32 doesn't support 5GHz)
+- Ensure network allows new devices
+
+#### MQTT connection fails
+
+- Verify broker address and port
+- Check firewall rules
+- Test broker with `mosquitto_pub`:
+  ```bash
+  mosquitto_pub -h mqtt.example.com -t test -m "hello"
+  ```
+
+### Project Structure
+
+```
+microclaw/
+├── platformio.ini       # PlatformIO config (board, libraries)
+├── src/
+│   └── main.cpp         # Main firmware code
+├── lib/
+│   └── README.md        # Custom sensor driver libraries
+├── .gitignore           # Ignore build artifacts
+└── README.md            # This file
+```
+
+### Next Steps
+
+- **Add sensors**: See issue [#2 - DHT22 sensor driver](../../issues/2)
+- **Enable MQTT**: Configure your broker in `main.cpp`
+- **Low power mode**: See issue [#5 - Deep sleep](../../issues/5)
+- **Hardware guide**: See issue [#4 - Wiring diagrams](../../issues/4)
+
+---
+
 ## Status
 
 🚧 **Pre-Alpha** — Architecture design phase. Looking for contributors!
