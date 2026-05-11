@@ -54,7 +54,77 @@ MicroClaw is the smallest member of the Claw family — a bare-metal AI agent th
 
 ## Status
 
-🚧 **Pre-Alpha** — Architecture design phase. Looking for contributors!
+🚧 **Pre-Alpha** — The ESP32 reference firmware now includes a DHT22 sensor
+loop, MQTT reporting, command handling, and optional deep sleep.
+
+## MicroClaw ESP32 Sensor Agent
+
+The default PlatformIO target builds an Arduino-based ESP32 firmware for a
+low-cost DHT22 environmental node.
+
+### Hardware
+
+| Part | Default pin | Notes |
+|------|-------------|-------|
+| ESP32 dev board | - | `esp32dev` PlatformIO target |
+| DHT22 data | GPIO 4 | Override with `MICROCLAW_DHT_PIN` |
+| DHT22 VCC/GND | 3.3V/GND | Use a 4.7k-10k pull-up on DATA if the module does not include one |
+
+### Configuration
+
+Set deployment-specific values in `platformio.ini` `build_flags`:
+
+```ini
+build_flags =
+    -DMICROCLAW_WIFI_SSID=\"lab-wifi\"
+    -DMICROCLAW_WIFI_PASSWORD=\"secret\"
+    -DMICROCLAW_MQTT_HOST=\"192.168.1.10\"
+    -DMICROCLAW_MQTT_PORT=1883
+    -DMICROCLAW_NODE_ID=\"rack-a1-dht22\"
+    -DMICROCLAW_DHT_PIN=4
+    -DMICROCLAW_WAKE_INTERVAL_SECONDS=60
+    -DMICROCLAW_DEEP_SLEEP_ENABLED=1
+```
+
+### MQTT Topics
+
+For `MICROCLAW_NODE_ID=rack-a1-dht22`, the firmware uses:
+
+| Topic | Direction | Payload |
+|-------|-----------|---------|
+| `microclaw/rack-a1-dht22/telemetry` | publish | JSON temperature, humidity, thresholds, uptime, heap, alert flag |
+| `microclaw/rack-a1-dht22/alert` | publish | Same JSON telemetry when thresholds are exceeded |
+| `microclaw/rack-a1-dht22/status` | publish | Retained online/offline/sensor/command status |
+| `microclaw/rack-a1-dht22/command` | subscribe | JSON command from PicClaw/NanoClaw |
+
+Supported commands:
+
+```json
+{"type":"sample"}
+{"type":"sleep"}
+{"type":"set_thresholds","temp_alert_c":32.5,"humidity_alert_pct":75}
+```
+
+### Deep Sleep
+
+When `MICROCLAW_DEEP_SLEEP_ENABLED=1`, MicroClaw publishes one sample, enables
+`esp_sleep_enable_timer_wakeup`, and enters `esp_deep_sleep_start()` until the
+next timer wake. This keeps battery deployments simple while preserving the
+same MQTT telemetry shape as always-on nodes.
+
+### Verification
+
+Without a local ESP32 toolchain, run the static firmware contract tests:
+
+```bash
+python tests/test_firmware_static.py
+```
+
+With PlatformIO installed, run:
+
+```bash
+pio run
+```
 
 ## Contributing
 

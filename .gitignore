@@ -1,4 +1,5 @@
 .pio/
+.pio-venv/
 .vscode/
 lib/
 include/
