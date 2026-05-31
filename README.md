@@ -56,6 +56,62 @@ MicroClaw is the smallest member of the Claw family — a bare-metal AI agent th
 
 🚧 **Pre-Alpha** — Architecture design phase. Looking for contributors!
 
+## ESP32-C3 Firmware Port
+
+The default PlatformIO target is now `esp32c3`, using the
+`esp32-c3-devkitm-1` board profile. The legacy `esp32` environment remains
+available for generic ESP32 dev boards.
+
+The firmware reads:
+
+- one analog sensor on `MICROCLAW_ANALOG_PIN` (default `GPIO2` for ESP32-C3),
+- one DHT-style temperature/humidity sensor on `MICROCLAW_DHT_PIN` (default
+  `GPIO4`, `DHT22`),
+- Wi-Fi RSSI and uptime.
+
+When MQTT is configured, the node publishes compact JSON status payloads to
+`MICROCLAW_MQTT_TOPIC`. When Wi-Fi is connected, ArduinoOTA is enabled by
+default so test devices can receive firmware updates without a USB cable.
+
+### Configuration
+
+Configure credentials and endpoints with PlatformIO build flags or your local
+environment. Do not commit private SSIDs, passwords, broker credentials, or OTA
+passwords.
+
+Example local build flags:
+
+```ini
+build_flags =
+    -D MICROCLAW_NODE_ID=\"greenhouse-node-01\"
+    -D MICROCLAW_WIFI_SSID=\"your-ssid\"
+    -D MICROCLAW_WIFI_PASSWORD=\"your-password\"
+    -D MICROCLAW_MQTT_HOST=\"192.0.2.10\"
+    -D MICROCLAW_MQTT_PORT=1883
+    -D MICROCLAW_MQTT_TOPIC=\"clawland/microclaw/greenhouse-node-01/status\"
+```
+
+Useful optional flags:
+
+```ini
+    -D MICROCLAW_ANALOG_PIN=2
+    -D MICROCLAW_DHT_PIN=4
+    -D MICROCLAW_DHT_TYPE=DHT22
+    -D MICROCLAW_REPORT_INTERVAL_MS=10000
+    -D MICROCLAW_ENABLE_OTA=1
+```
+
+### Validation
+
+```bash
+pio run -e esp32c3
+pio run -e esp32
+```
+
+Runtime validation requires physical ESP32-C3 hardware, a DHT-compatible
+sensor, and an MQTT broker. Without hardware, the build verifies that the
+firmware, dependencies, and board targets compile.
+
 ## Contributing
 
 See the [Clawland Contributing Guide](https://github.com/Clawland-AI/.github/blob/main/CONTRIBUTING.md).
