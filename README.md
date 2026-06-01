@@ -56,6 +56,16 @@ MicroClaw is the smallest member of the Claw family — a bare-metal AI agent th
 
 🚧 **Pre-Alpha** — Architecture design phase. Looking for contributors!
 
+
+## ESP32-C3 Firmware Port
+
+The PlatformIO firmware now supports both `esp32c3` and legacy `esp32` build
+targets. Runtime defaults are credential-free/no-op safe: Wi-Fi, MQTT, OTA, and
+deep sleep are configured through build flags rather than committed secrets.
+
+See `docs/esp32-c3-port.md` for pin defaults, MQTT payload shape, build
+commands, OTA/deep-sleep flags, and hardware validation notes.
+
 ## Contributing
 
 See the [Clawland Contributing Guide](https://github.com/Clawland-AI/.github/blob/main/CONTRIBUTING.md).
