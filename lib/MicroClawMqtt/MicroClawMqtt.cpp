@@ -19,6 +19,10 @@ bool MicroClawMqtt::ensureConnected(uint32_t timeoutMs) {
   return mqtt_.connected();
 }
 
+bool MicroClawMqtt::publishStatus(const String& json) {
+  return ensureConnected() && mqtt_.publish(topic("status").c_str(), json.c_str(), true);
+}
+
 bool MicroClawMqtt::publishSensor(const char* sensorType, const String& json) {
   const String suffix = String("sensors/") + sensorType;
   return ensureConnected() && mqtt_.publish(topic(suffix.c_str()).c_str(), json.c_str(), true);

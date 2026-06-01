@@ -44,6 +44,18 @@ static String sensorJson(const DHT22Reading& reading, uint16_t batteryMv) {
   return json;
 }
 
+static String statusJson(const char* state, uint16_t batteryMv) {
+  String json = "{";
+  json += "\"node_id\":\"" + String(kNodeId) + "\",";
+  json += "\"state\":\"" + String(state) + "\",";
+  json += "\"battery_mv\":" + String(batteryMv) + ",";
+  json += "\"sleep_seconds\":" + String(kSleepSeconds) + ",";
+  json += "\"ota_window_seconds\":" + String(kOtaWindowSeconds) + ",";
+  json += "\"firmware\":\"" + String(kVersion) + "\"";
+  json += "}";
+  return json;
+}
+
 static String errorJson(const char* code, uint16_t batteryMv) {
   String json = "{";
   json += "\"node_id\":\"" + String(kNodeId) + "\",";
@@ -94,6 +106,8 @@ void setup() {
   mqtt.begin();
   configureOTA();
 
+  mqtt.publishStatus(statusJson("awake", batteryMv));
+
   if (reading.ok) {
     mqtt.publishSensor("dht22", sensorJson(reading, batteryMv));
   } else {
@@ -105,6 +119,7 @@ void setup() {
   }
 
   runOTAWindow();
+  mqtt.publishStatus(statusJson("sleeping", batteryMv));
   sleepUntilNextCycle();
 }
 

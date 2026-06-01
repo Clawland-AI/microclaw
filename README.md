@@ -52,13 +52,25 @@ Edit `platformio.ini` build flags before flashing:
 
 ```sh
 platformio run -e esp32c3
+platformio run -e esp32
 platformio run -e esp32c3 -t upload
 platformio device monitor -e esp32c3
 ```
 
-### MQTT Payload
+### MQTT Payloads
 
-Sensor reports are retained JSON messages:
+Status and sensor reports are retained JSON messages on the `clawland/{node_id}/...` topic tree:
+
+```json
+{
+  "node_id": "microclaw-esp32c3-001",
+  "state": "awake",
+  "battery_mv": 3812,
+  "sleep_seconds": 300,
+  "ota_window_seconds": 20,
+  "firmware": "0.2.0"
+}
+```
 
 ```json
 {
@@ -77,7 +89,7 @@ Validation without ESP32 hardware:
 node scripts/validate-esp32-port.mjs
 ```
 
-See [`docs/wiring.md`](docs/wiring.md) for sensor wiring.
+See [`docs/wiring.md`](docs/wiring.md) for sensor wiring and [`docs/telemetry-contract.md`](docs/telemetry-contract.md) for the MQTT topic and payload contract.
 
 ## Supported Hardware
 

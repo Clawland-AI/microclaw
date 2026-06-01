@@ -10,6 +10,7 @@ class MicroClawMqtt {
 
   void begin();
   bool ensureConnected(uint32_t timeoutMs = 8000);
+  bool publishStatus(const String& json);
   bool publishSensor(const char* sensorType, const String& json);
   bool publishAlert(const char* level, const String& json);
   void loop();

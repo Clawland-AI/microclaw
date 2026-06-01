@@ -11,19 +11,24 @@ const requiredFiles = [
   "lib/BatteryMonitor/BatteryMonitor.h",
   "lib/BatteryMonitor/BatteryMonitor.cpp",
   "docs/wiring.md",
+  "docs/telemetry-contract.md",
 ];
 
 const requiredTerms = [
   ["platformio.ini", "esp32-c3-devkitm-1"],
+  ["platformio.ini", "esp32dev"],
   ["platformio.ini", "PubSubClient"],
   ["src/main.cpp", "ArduinoOTA"],
   ["src/main.cpp", "esp_deep_sleep_start"],
+  ["src/main.cpp", "publishStatus"],
   ["src/main.cpp", "publishSensor"],
   ["src/main.cpp", "battery_low"],
   ["lib/DHT22Sensor/DHT22Sensor.cpp", "DHT22"],
   ["lib/MicroClawMqtt/MicroClawMqtt.cpp", "clawland/"],
   ["docs/wiring.md", "DHT22"],
   ["docs/wiring.md", "Relay"],
+  ["docs/telemetry-contract.md", "clawland/{node_id}/status"],
+  ["docs/telemetry-contract.md", "hardware-tested"],
 ];
 
 const missing = requiredFiles.filter((file) => !fs.existsSync(file));
