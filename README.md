@@ -2,6 +2,8 @@
 
 **Sensor-level micro AI Agent in C/Rust. <1MB RAM, runs on $2-5 MCU hardware.**
 
+[English](README.md) | [简体中文](README_CN.md)
+
 > Part of the [Clawland](https://github.com/Clawland-AI) ecosystem.
 
 ---
